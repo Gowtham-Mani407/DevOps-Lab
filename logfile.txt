@@ -1,0 +1,146 @@
+Hi this is the linux terminal you are typing in the vi editor 
+To save the file use :wq or to quit the file use :q!
+smileey..
+
+* mdkir - used to create directory / mkdir -p used to create a multiple dir
+* mv for move - eg : hlo.txt demo.txt -> sorurc + destination
+* cp for copy - eg : same as move
+* vi demofile.txt - it will create a file
+* touch hlofile.txt - we can also create a dummy file and later we can edit and open
+
+
+ 
+we can copy file using "cat" also
+
+* cat demo.txt >> rfile.txt -> it wil create the file by copying the content
+* cat ~/ hlo.txt -> short cut instead of giving /home/gowtham everytime
+* cd .. -> back from last dir
+* cd ../.. -> back from last two dir
+* ls -lstr -> it provides the all the list with detail
+
+
+Hard link and Soft link :
+
+* hardlink - another name for samefile/data -> ln original.txt hardlnfile.txt
+  Now both has same data. if you made chhanges in one . anotherOne will get the changes.
+
+* softlink - a reference that points to anotherfile or path -> ln -s Orginal.txt softlnfile.txt 
+  Now softfile copied the pathrefernce of originl.txt 
+  when you use ls -lstr you can able to see -> softlnfile.txt -> Orginal.txt
+
+Alias :
+
+* we can create our own short using alias instead of givig everytime full path like cd/home/gowtham/data/demo
+* we can store like $gowtham="cd/home/gowtham/data/demo
+* we can use next like $gowtham as simply. but give meaningful name
+* but this alias is temporary . if you want it permanent you need to sava this line in .bashrc file.
+
+nohup:
+
+* Its the process of running the task or program in the background
+* nohup -> keep running after termimal /ssh disconnects
+* eg : command -> $ nohup python3 -u pyprogram.py >> dataprocess.log & ( dataprocess.log we just added to see logs )
+* & symbol -> run the command in the background
+
+* to check the background things running we can use three types
+  -> top - it shows all background tasks like taskmanger
+  -> ps - process status
+  -> ps -Aux - its shows more preciesly 
+  -> ps -Aux|grep dataprocess.py -  it shows the exct output like pattern matching.
+
+ tail -f dataprocess.log -> it will show the realtime printing logs
+* tail -10 dataprocess.log -> it shows last 10 items
+
+* kill the background process using this cmd
+  $ kill -9 163778(program number)
+ 
+Download image  - wget "link"
+
+Disk freespace - df -h
+Disk usage - du - sh filename (or) directory 
+
+zip and unzip
+
+* if any error while zip install it like - $ sudo apt -get install zip
+* even facing error update then install -> $ sudo apt -get update 
+
+cmd   -> zip -r filename.zip scrits/(source)
+         
+         r -> means recursive it zip all files inside the scripts
+
+unzip -> unzip file.zip
+
+
+Tar:
+
+ $ tar -czvf sample.tar script/
+   c - compress
+   z - forcable formats some file
+   v - verbouse
+   f - following list
+
+untar - $ tar -zxvf sample.tar
+
+Change Mode :
+* Giving permission to read and write
+
+table fyr:
+
+permission  | symbol |value
+
+read        |    r   | 4
+write       |    w   | 2
+execute     |    x   | 1
+
+6 -> 4+2 = rw -> read and write 
+5 -> 4+1 = r-x -> read and excecute
+= -> no persmisson 
+
+eg : chmode 755 datafile.txt
+
+7 -> user  -> rwx
+5 -> Group ->  r-x
+5 -> otheres -> r-x 
+
+
+Bash: - bourne again shell
+its both :
+   
+   -> A shell you can use interactively
+   -> A scripting language you can use to automate tasks.
+
+you can check -> echo $SHELL - output -> echo $SHELL
+
+* shell scripting: -> Instead of manually typing commands. you put them into a file:
+
+#!/bin/bash
+
+mkdir backup
+cp *.log backup/
+date
+echo "Backup completed"
+
+* backup.sh -> save it . then bash backup.sh
+
+
+cron -> crone is simple linux job schedular
+usecase:
+* backupdatabase , run python scripts , clean old files , send scheduled emails etc..
+
+$ crontab -e -> it will open nano editor -> paste the cmd there.
+
+Bash + Cron:
+
+eg: 
+
+#!/bin/bash
+echo "Backup started"
+cp ~/data/*.log ~/backup/
+echo "Backup completed"
+
+save this bash script - backup.sh
+
+-> Then cron can run it every day: 
+  eg: 0 2 * * * /home/gowtham/backup.sh
+
+by Gowtham Mani
