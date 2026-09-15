@@ -1,0 +1,88 @@
+OSI with internet works:
+
+eg : http:// example.com
+
+-> simplified  sequence:
+
+1. Browser neeed the IP address
+2. DNS find the IP
+3. Browser connects theb server
+4. This establish the Http encryption
+5. Browser sends the Http request
+6. server sends Http response
+7. Browser displays the page
+
+important layers:
+
+-> layer 7 -> Application -> HTTP , HTTPS , DNS , SSH -> eg : Get/user
+-> layer 4 -> Transport -> protocols -> TCP , UDP -> TCP gives relaible connection , http commonly operates on TCP
+-> layer 3 -> Network -> network -> IP
+-> layer 2 -> Datalink 
+-> layer 1 -> physical
+
+
+overview:
+
+1.Application
+  -> HTTP/HTTPS/DNS
+
+2. Transport
+  -> TCP/UDP
+
+3.Network
+  -> IP
+
+4.physical
+  -> actual network hardware/signals
+
+To view ip address assigned to our device 
+cmd: hostnamr -I
+
+
+Basic network connectivity:
+-> ping google.com
+
+Test Http/Https connection
+-> curl https://google.com
+
+Test DNS resolution
+-> nslookup google.com
+
+cmd : ss -tuln -> linu cmd to listen which network ports are currently listening on your machine
+
+we can see certiicates :
+
+cmd -> curl -IV https:// google.com
+
+HTTP -> Data not encrpted by TLS
+HTTPS -> TLS encrption
+
+
+DNS,Http/Https & TLS
+
+eg: https://myapp.com
+
+Flow:
+
+ 1. Internet
+ 
+ 2. DNS
+    myapp.com
+
+    45.123.67.89
+
+    port 443
+
+3. Nginx
+   Https/Tls
+
+4. applications
+
+Major concepts
+
+DNS -> Ip address
+TCP -> connection
+TLS -> encrption
+Http -> actual web request
+
+ 
