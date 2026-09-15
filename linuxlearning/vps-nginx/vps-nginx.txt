@@ -1,0 +1,105 @@
+Vps - virtual private server
+ -> its basically a virtual linux computer hosted in a data center that you can access over internet.eg : aws ,azure are providers.
+ -> Applications in vps is pulicly accessible.
+
+Flow: eg:
+
+  1. Internet
+       |
+  2. Nginx
+     :80/:433
+       |
+  3. springboot
+     :8080
+       |
+  4. Database  
+
+So: 
+vps - actual virtual computer
+linux - os running on it 
+nginx - webserver / reverse proxy runnuning on it
+soringboot - your application on it
+
+connect vps usng ssh:
+eg: ssh ubuntu@123.45.67.89 -> username & Ip address
+
+
+NGINX: -> webserver & reverse proxy
+
+view:
+          -> req ->  -> reverse proxy -> application server
+  client /          N
+         \-> res <-   < - response -> application server
+
+
+NGINX -> ita main job is to recive the requesr from users and decides .where/how to handle requests.
+
+uses:
+
+  -> Https/ SSl termination
+  -> Reverse proxying
+  -> serving static files (eg : HTMl , css , js , images)
+  -> Load Balancing
+  -> request routing
+  -> connection handling
+  -> Basic security controls
+  -> caching
+
+proxy -> it works as a middleman
+Reverse Proxy -> Nginx forwads the request to springboot called reverse proxying
+
+
+Load balancer : 
+
+  Nginx can distribute the requests
+
+configure nginx:
+  
+  -> sudo apt intsall nginx
+  -> sudo system ctcl status nginx
+  -> start it -> sudo systemctk start nginx
+  -> stop it ->sudo systemctl stop nginx
+  -> restaet -> sudo systemctl restart nginx
+
+where nginx configured ?
+
+   cmd : ls /etc/nginx/
+
+   output like - nginx.conf , sites-available , sites-enabled , conf.d
+
+normaly if you run any python or java application it  will run in local host :8080
+
+Now put Nginx in front in our application:
+
+1. Create a site configuration:
+  
+  - sudo nano /etc/nginx/sites-available/networking-lab
+
+  put in networking-lab:
+
+   server {
+    listen 80;
+
+    server_name localhost;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+    }
+}
+
+2. Enable the configuration
+
+  -> sudo ln -s /etc/nginx/sites-available/networking-lab /etc/nginx/sites-enabled/networking-lab
+  
+3. Test the Nginx configuration
+  -> sudo nginx -t   -> syntax is ok and test is successful
+
+4. Reload Nginx -> sudo systemctl reload nginx
+ then -> curl http://localhost -> will get output in terminal
+
+5 . now if you run the python3 pyscript.py
+    Nginx will forward the request to http://127.0.0.1:8080 instead of localhost:8080
+
+   127.0.0.1:8080 -> it also called localhost
+
+
