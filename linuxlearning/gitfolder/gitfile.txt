@@ -1,0 +1,27 @@
+create and push :
+
+-> creata a empty repo in git
+1. create a dir in linuc named eg: devops-lab
+2. inside dir -> run "git init" -> to turn this folder in to git repository.
+3. first time only 
+   -> "git config --global username "Gowtham-Mani407"
+   -> "git config --global user.email "abc@gmail.com"
+4. "git add." -> To stage everthing in folder.
+5. "git commit -m "initial commit" -> to save a snapshot of staged file with message.
+6. Git deafaulty craete master as branch. we can change it like we want
+   " git branch -m main"
+7. Then add
+   "git remote add origin "http:// git repo link"
+8. "git push -u origin main"
+9. when you push it will ask username and pwd as PAT token:
+   -> give username
+   -> get the PAT token from -> github -> settings-> dev settings -> token -> classic -> create
+
+git flows:
+ 
+->  git branch -> show all branch
+->  git status -> show current branch and status
+->  git switch -c linux learmn -> create + switch to new branch
+->  git switch main -> Go back to main
+
+store your username and PAT in git credntial manager . so it wont ask ask everytime when you push.
