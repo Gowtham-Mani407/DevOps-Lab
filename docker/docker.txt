@@ -1,0 +1,52 @@
+Docker -> it package everything an application together with the things it needs to run into a container.
+       -> container contains the applcation , dependecncies , configureation
+
+
+VM -> Virtual Machine
+
+ -> A hypervisor, also known as a Virtual Machine Monitor (VMM), is software that lets multiple operating systems run at     the same time on a single physical computer
+
+one physical server  -> Host OS 
+                          |
+
+                       Hypervisor -> VM1 , VM2 , VM3 -> every machine has Guest OS
+
+  -> Each VM Contains Operating system
+
+Docker: 
+
+ physical server -> Host Os
+                      |
+                    Docker Engine
+                      |
+                   c1   c2  c2
+
+
+-> container share the Host Kernl rather than carrying the guest OS.
+-> container are much faster than VM
+
+  Dockerfile  -> Image -> container
+
+Dockerfile  -> here the instruction for creating my application environment
+Image -> prepared package 
+         It contains the environment needed to create a Application environment
+         eg: java21 , Dependecies , etc..
+
+Container -> Running instance
+             That image is currently running.
+
+
+Analaogy :
+
+ DockerFile 
+     
+     |     -> docker build
+   Image
+     |     -> docker run
+
+ Container
+
+Docker command:
+
+
+
