@@ -1,0 +1,634 @@
+# 🐳 Docker Python App — Hands-on Reference
+
+## 1. Create Project
+
+```bash
+cd ~/devops-lab
+mkdir docker-demo
+cd docker-demo
+```
+
+Project structure:
+
+```text
+docker-demo/
+├── app.py
+└── Dockerfile
+```
+
+---
+
+## 2. Create Python Application
+
+```bash
+nano app.py
+```
+
+Add:
+
+```python
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/plain")
+        self.end_headers()
+
+        self.wfile.write(b"Hello from Docker!")
+
+server = HTTPServer(("0.0.0.0", 8000), Handler)
+
+print("Server running on port 8000")
+
+server.serve_forever()
+```
+
+Save:
+
+```text
+Ctrl + O
+Enter
+Ctrl + X
+```
+
+---
+
+## 3. Test Python App Without Docker
+
+Run:
+
+```bash
+python3 app.py
+```
+
+Expected:
+
+```text
+Server running on port 8000
+```
+
+Open another terminal:
+
+```bash
+curl http://localhost:8000
+```
+
+Expected:
+
+```text
+Hello from Docker!
+```
+
+Stop the Python server:
+
+```text
+Ctrl + C
+```
+
+---
+
+# 4. Create Dockerfile
+
+```bash
+nano Dockerfile
+```
+
+Add:
+
+```dockerfile
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY app.py .
+
+EXPOSE 8000
+
+CMD ["python3", "app.py"]
+```
+
+---
+
+# 5. Dockerfile Explanation
+
+### FROM
+
+```dockerfile
+FROM python:3.12-slim
+```
+
+Uses Python 3.12 as the base image.
+
+```text
+FROM = Choose the base environment
+```
+
+---
+
+### WORKDIR
+
+```dockerfile
+WORKDIR /app
+```
+
+Creates/uses `/app` as the working directory inside the container.
+
+Similar to:
+
+```bash
+cd /app
+```
+
+---
+
+### COPY
+
+```dockerfile
+COPY app.py .
+```
+
+Copies:
+
+```text
+Computer:
+app.py
+   ↓
+Container:
+/app/app.py
+```
+
+`.` means the current working directory (`/app`).
+
+---
+
+### EXPOSE
+
+```dockerfile
+EXPOSE 8000
+```
+
+Documents that the application uses port `8000`.
+
+Important:
+
+```text
+EXPOSE does NOT publish the port.
+```
+
+Port publishing is done with `-p` when running the container.
+
+---
+
+### CMD
+
+```dockerfile
+CMD ["python3", "app.py"]
+```
+
+Command that runs when the container starts.
+
+```text
+docker run
+    ↓
+CMD
+    ↓
+python3 app.py
+```
+
+---
+
+# 6. Build Docker Image
+
+Run from inside `docker-demo`:
+
+```bash
+docker build -t docker-demo .
+```
+
+Meaning:
+
+```text
+docker build
+    ↓
+Build an image
+
+-t docker-demo
+    ↓
+Give image the name "docker-demo"
+
+.
+    ↓
+Use current directory as build context
+```
+
+---
+
+# 7. Check Docker Image
+
+```bash
+docker images
+```
+
+You should see:
+
+```text
+REPOSITORY
+docker-demo
+```
+
+Because no tag was specified, Docker uses:
+
+```text
+docker-demo:latest
+```
+
+---
+
+# 8. Run Docker Container
+
+Basic:
+
+```bash
+docker run docker-demo
+```
+
+The application starts, but the terminal is occupied.
+
+Stop:
+
+```text
+Ctrl + C
+```
+
+---
+
+# 9. Run with Port Mapping
+
+```bash
+docker run -p 8000:8000 docker-demo
+```
+
+Format:
+
+```text
+-p HOST_PORT:CONTAINER_PORT
+```
+
+So:
+
+```text
+-p 8000:8000
+```
+
+means:
+
+```text
+Computer
+localhost:8000
+      │
+      ▼
+Container
+port 8000
+      │
+      ▼
+Python app
+```
+
+---
+
+# 10. Test Docker Application
+
+Keep the container running.
+
+Open another terminal:
+
+```bash
+curl http://localhost:8000
+```
+
+Expected:
+
+```text
+Hello from Docker!
+```
+
+---
+
+# 11. Run Container in Background
+
+Stop the foreground container:
+
+```text
+Ctrl + C
+```
+
+Run:
+
+```bash
+docker run -d -p 8000:8000 --name docker-demo-container docker-demo
+```
+
+Options:
+
+```text
+-d
+    Run in background
+
+-p 8000:8000
+    Map host port 8000 → container port 8000
+
+--name docker-demo-container
+    Give the container a custom name
+
+docker-demo
+    Image to use
+```
+
+---
+
+# 12. Check Running Container
+
+```bash
+docker ps
+```
+
+You should see:
+
+```text
+IMAGE         docker-demo
+PORTS         0.0.0.0:8000->8000/tcp
+NAMES         docker-demo-container
+```
+
+---
+
+# 13. Test Again
+
+```bash
+curl http://localhost:8000
+```
+
+Expected:
+
+```text
+Hello from Docker!
+```
+
+---
+
+# 14. View Container Logs
+
+```bash
+docker logs docker-demo-container
+```
+
+Expected:
+
+```text
+Server running on port 8000
+```
+
+Follow logs continuously:
+
+```bash
+docker logs -f docker-demo-container
+```
+
+Stop following:
+
+```text
+Ctrl + C
+```
+
+---
+
+# 15. Enter the Container
+
+```bash
+docker exec -it docker-demo-container bash
+```
+
+Now you are inside the container.
+
+Check current directory:
+
+```bash
+pwd
+```
+
+Expected:
+
+```text
+/app
+```
+
+List files:
+
+```bash
+ls
+```
+
+Expected:
+
+```text
+app.py
+```
+
+Check Python:
+
+```bash
+python3 --version
+```
+
+Exit container:
+
+```bash
+exit
+```
+
+---
+
+# 16. Stop Container
+
+```bash
+docker stop docker-demo-container
+```
+
+Check:
+
+```bash
+docker ps
+```
+
+It won't appear because it is stopped.
+
+Check all containers:
+
+```bash
+docker ps -a
+```
+
+It will appear as:
+
+```text
+Exited
+```
+
+---
+
+# 17. Start Existing Container Again
+
+```bash
+docker start docker-demo-container
+```
+
+Check:
+
+```bash
+docker ps
+```
+
+Important:
+
+```text
+docker run
+    → Creates NEW container
+
+docker start
+    → Starts EXISTING container
+```
+
+---
+
+# 18. Remove Container
+
+Stop it first:
+
+```bash
+docker stop docker-demo-container
+```
+
+Remove:
+
+```bash
+docker rm docker-demo-container
+```
+
+Or force remove:
+
+```bash
+docker rm -f docker-demo-container
+```
+
+---
+
+# 19. Remove Docker Image
+
+After removing the container:
+
+```bash
+docker rmi docker-demo
+```
+
+Check:
+
+```bash
+docker images
+```
+
+The `docker-demo` image should be gone.
+
+---
+
+# ⭐ Complete Workflow
+
+The complete process is:
+
+```text
+1. Create Python app
+       ↓
+2. Test Python app
+       ↓
+3. Create Dockerfile
+       ↓
+4. docker build
+       ↓
+5. Docker Image
+       ↓
+6. docker run
+       ↓
+7. Docker Container
+       ↓
+8. Port Mapping
+       ↓
+9. Test with curl
+       ↓
+10. docker logs
+       ↓
+11. docker exec
+       ↓
+12. docker stop
+       ↓
+13. docker rm
+       ↓
+14. docker rmi
+```
+
+## ⭐ Commands to Remember
+
+```bash
+# Build image
+docker build -t docker-demo .
+
+# List images
+docker images
+
+# Run container
+docker run -d -p 8000:8000 --name docker-demo-container docker-demo
+
+# List running containers
+docker ps
+
+# List all containers
+docker ps -a
+
+# Test application
+curl http://localhost:8000
+
+# View logs
+docker logs docker-demo-container
+
+# Enter container
+docker exec -it docker-demo-container bash
+
+# Stop container
+docker stop docker-demo-container
+
+# Start container
+docker start docker-demo-container
+
+# Remove container
+docker rm docker-demo-container
+
+# Remove image
+docker rmi docker-demo
+```
+
+## 🧠 Remember
+
+```text
+Dockerfile
+    │
+    │ docker build
+    ▼
+IMAGE
+    │
+    │ docker run
+    ▼
+CONTAINER
+    │
+    │ -p
+    ▼
+HOST MACHINE
+```
