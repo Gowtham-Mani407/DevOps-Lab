@@ -46,7 +46,606 @@ Analaogy :
 
  Container
 
-Docker command:
+Docker Commands
+===============
+
+1. Install Docker Desktop
+
+2. Check Docker version:
+   $ docker version
+
+3. List Docker images:
+   $ docker images
+
+4. If permission denied occurs with a native Linux Docker Engine:
+   $ sudo usermod -aG docker $USER
+
+5. Build a Docker image using a Dockerfile:
+   $ docker build -t calculator .
+
+6. List Docker images:
+   $ docker image ls
+
+7. Create and run a container using the image:
+   $ docker run -p 80:8080 calculator
+
+   80   -> Host port
+   8080 -> Container port
+   calculator -> Image name
+
+8. Check running containers:
+   $ docker ps
+
+9. Check all containers:
+   $ docker ps -a
 
 
+
+Docker hub;
+
+-> its the place to store our Docker Images 
+-> we can create a repository and we can able to push our images in it 
+
+========================================
+    DOCKER HUB - IMAGE UPLOAD GUIDE
+========================================
+
+IMAGE NAME   : calculator
+REPOSITORY   : devopsRepo
+USERNAME     : YOUR_DOCKERHUB_USERNAME
+
+
+STEP 1: Check Docker version
+----------------------------
+docker version
+
+
+STEP 2: Check local Docker images
+---------------------------------
+docker images
+
+
+STEP 3: Build Docker image
+--------------------------
+docker build -t calculator . (dot which saying the cuurrent directory)
+
+
+STEP 4: Login to Docker Hub
+---------------------------
+docker login
+
+# Enter your Docker Hub username and
+# password or access token when prompted.
+
+
+STEP 5: Tag the Docker image
+----------------------------
+
+# Format:
+# docker tag IMAGE_NAME USERNAME/REPOSITORY:TAG
+
+docker tag calculator YOUR_DOCKERHUB_USERNAME/devopsRepo:latest
+
+# Example:
+docker tag calculator gowthammani/devopsRepo:latest
+
+
+STEP 6: Push image to Docker Hub
+--------------------------------
+
+# Format:
+# docker push USERNAME/REPOSITORY:TAG
+
+docker push YOUR_DOCKERHUB_USERNAME/devopsRepo:latest
+
+# Example:
+docker push gowthammani/devopsRepo:latest
+
+
+STEP 7: Check images
+--------------------
+docker images
+
+
+STEP 8: Remove local image (Optional)
+-------------------------------------
+docker rmi calculator
+
+
+STEP 9: Pull image from Docker Hub
+----------------------------------
+
+# Format:
+# docker pull USERNAME/REPOSITORY:TAG
+
+docker pull YOUR_DOCKERHUB_USERNAME/devopsRepo:latest
+
+# Example:
+docker pull gowthammani/devopsRepo:latest
+
+
+STEP 10: Run container using Docker Hub image
+---------------------------------------------
+
+# Format:
+# docker run -d -p HOST_PORT:CONTAINER_PORT IMAGE
+
+docker run -d -p 80:8080 \
+YOUR_DOCKERHUB_USERNAME/devopsRepo:latest
+
+# Example:
+docker run -d -p 80:8080 \
+gowthammani/devopsRepo:latest
+
+
+STEP 11: Check running containers
+---------------------------------
+docker ps
+
+
+STEP 12: Check all containers
+-----------------------------
+docker ps -a
+
+
+========================================
+          DOCKER WORKFLOW
+========================================
+
+Dockerfile
+     |
+     v
+docker build
+     |
+     v
+Docker Image
+     |
+     |  Image Name: calculator
+     v
+docker tag
+     |
+     v
+Docker Hub Repository
+     |
+     |  Repository: devopsRepo
+     v
+docker push
+     |
+     v
+Image Uploaded to Docker Hub
+     |
+     v
+docker pull
+     |
+     v
+docker run
+     |
+     v
+Running Container
+
+
+========================================
+       IMPORTANT COMMANDS
+========================================
+
+docker images
+# List local images
+
+docker build -t calculator .
+# Build image
+
+docker tag
+# Tag image for Docker Hub
+
+docker push
+# Upload image
+
+docker pull
+# Download image
+
+docker ps
+# Show running containers
+
+docker ps -a
+# Show all containers
+
+docker stop CONTAINER_NAME
+# Stop container
+
+docker rm CONTAINER_NAME
+# Remove container
+
+docker rmi IMAGE_NAME
+# Remove image
+
+docker start <container id>
+# we can either use container name or id
+
+
+how container communicate :
+
+A container has its own port. If we want to access the containerized application from the host machine, we usually map a host port to the container port. For example, -p 80:8080 means requests coming to the host's port 80 are forwarded to the container's port 8080.
+
+Host → Host Port (80) → Container Port (8080)
+
+Containers on the same Docker network can also communicate directly with each other using the container name and container port, without exposing the port to the host.
+
+
+DOCKER VOLUME:
+
+=> What is a Docker Volume?
+
+A Docker Volume is a storage mechanism used to store data outside the container.
+
+It is mainly used to **persist data**, so the data remains available even if the container is stopped, removed, or recreated.
+
+=> Why do we need Docker Volumes?
+
+Containers are usually temporary. If we delete a container, the data stored inside the container can also be lost.
+
+A volume keeps the important data separately from the container.
+
+Without Volume:
+
+Container → Application/Data
+
+If the container is deleted → Data may be lost ❌
+
+With Volume:
+
+Container → Docker Volume → Data
+
+If the container is deleted → Volume and data remain ✅
+
+---
+
+=> Create a Docker Volume
+
+```bash
+docker volume create mydata
+```
+
+=> List Docker Volumes
+
+```bash
+docker volume ls
+```
+
+=> Inspect a Volume
+
+```bash
+docker volume inspect mydata
+```
+
+=> Use a Volume with a Container
+
+```bash
+docker run -d --name mysql-container -v mydata:/var/lib/mysql mysql
+```
+
+Here:
+
+* `mydata` → Docker volume name
+* `/var/lib/mysql` → Directory inside the container where MySQL stores its data
+* `-v` → Mounts the volume to the container
+
+=> Volume Mapping
+
+```text
+Docker Volume                  Container
+     mydata   ───────────────→  /var/lib/mysql
+```
+
+The data is stored in the Docker Volume instead of depending only on the container's filesystem.
+
+---
+
+=> Important Commands
+
+```bash
+docker volume create mydata
+docker volume ls
+docker volume inspect mydata
+docker volume rm mydata
+```
+
+To remove unused volumes:
+
+```bash
+docker volume prune
+```
+
+=> Important Point
+
+**Container = Application environment**
+
+**Volume = Persistent storage for data**
+
+A Docker Volume is especially useful for databases such as **MySQL, PostgreSQL, and MongoDB**, where we don't want the database data to disappear when the container is removed.
+
+
+DOCKER MOUNT:
+
+-> What is Mount?
+
+In Docker, **mounting means attaching storage to a specific directory inside a container**.
+
+For example:
+
+```bash
+docker run -d --name mysql-container -v mydata:/var/lib/mysql mysql
+```
+
+Here:
+
+```text
+Docker Volume                  Container
+    mydata   ───────────────→  /var/lib/mysql
+              MOUNT
+```
+
+* `mydata` → Docker Volume
+* `/var/lib/mysql` → Directory inside the container
+* `-v` → Mounts the volume to the container
+
+The directory inside the container where the volume is attached is called the **mount point**.
+
+---
+
+-> Why do we Mount a Volume?
+
+We mount a volume when we want the container to use **persistent storage**.
+
+Without a volume:
+
+```text
+Container → Data
+```
+
+If the container is removed → Data may be lost.
+
+With a volume:
+
+```text
+Container → Volume → Data
+```
+
+If the container is removed → Volume and data remain.
+
+---
+
+-> Can we Mount a Volume to an Existing Container?
+
+Docker does not provide a normal `docker mount` command to attach a new volume to an already-created container.
+
+Therefore, if an existing container was created without a volume, we generally need to:
+
+1. Stop the existing container.
+2. Remove the existing container.
+3. Create a new container with the required volume mounted.
+
+Example:
+
+```bash
+docker stop mycontainer
+docker rm mycontainer
+docker run -d --name mycontainer -v mydata:/data myimage
+```
+
+-> Important
+
+We can use an **existing volume** when creating a new container.
+
+For example:
+
+```bash
+docker volume create mydata
+```
+
+Then:
+
+```bash
+docker run -d --name app1 -v mydata:/data myimage
+```
+
+The same volume can also be mounted to another container:
+
+```bash
+docker run -d --name app2 -v mydata:/data myimage
+```
+
+So one volume can be used by multiple containers, depending on how the application accesses the data.
+
+---
+
+## Simple Definition
+
+> **Mount = Attach a storage location (such as a Docker volume) to a directory inside a container.**
+
+### Remember
+
+```text
+Volume = Storage
+Mount  = Attaching the storage to a container
+Mount Point = Directory inside the container where the storage is attached
+```
+
+
+BIND MOUNT: 
+
+# Docker Bind Mount
+
+## What is a Bind Mount?
+
+A **Bind Mount** is a way to connect a specific **directory or file from the host machine** to a directory inside a Docker container.
+
+Unlike a Docker Volume, the location of the data is chosen and managed by us on the host machine.
+
+### Example
+
+```bash
+docker run -d --name myapp -v /home/gowtham/data:/app/data myimage
+```
+
+This means:
+
+```text
+Host Machine                     Container
+
+/home/gowtham/data  ──────────→  /app/data
+     Host folder                  Mount point
+```
+
+The host folder `/home/gowtham/data` is mounted to `/app/data` inside the container.
+
+---
+
+## How does Bind Mount work?
+
+If we create a file on the host:
+
+```text
+/home/gowtham/data/test.txt
+```
+
+It will be available inside the container as:
+
+```text
+/app/data/test.txt
+```
+
+Similarly, if the container creates a file inside:
+
+```text
+/app/data/
+```
+
+the file will also appear on the host inside:
+
+```text
+/home/gowtham/data/
+```
+
+Both locations are connected to the same data.
+
+---
+
+=> Why use Bind Mount?
+
+Bind mounts are commonly used during **development**.
+
+For example:
+
+```text
+Host Machine
+    │
+    │ Source code
+    ▼
+Bind Mount
+    │
+    ▼
+Docker Container
+    │
+    │ Application uses the code
+    ▼
+Application
+```
+
+We can edit the source code directly on our host machine, and the container can access those changes.
+
+---
+
+=> Docker Volume vs Bind Mount
+
+### Docker Volume
+
+```bash
+docker run -v mydata:/app/data myimage
+```
+
+```text
+Docker-managed storage
+        ↓
+      mydata
+        ↓
+Container /app/data
+```
+
+Docker manages where the volume is stored.
+
+### Bind Mount
+
+```bash
+docker run -v /home/gowtham/data:/app/data myimage
+```
+
+```text
+Host directory
+/home/gowtham/data
+        ↓
+Container /app/data
+```
+
+We choose the exact location on the host.
+
+---
+
+=> Main Difference
+
+| Docker Volume                                 | Bind Mount                                  |
+| --------------------------------------------- | ------------------------------------------- |
+| Docker manages the storage location           | We choose the host location                 |
+| Uses a Docker volume name                     | Uses a host path                            |
+| Example: `mydata:/data`                       | Example: `/home/gowtham/data:/data`         |
+| Good for persistent application/database data | Good for development and sharing host files |
+| Data is managed by Docker                     | Data is directly visible on the host        |
+
+---
+
+=> Important Syntax
+
+### Volume
+
+```bash
+-v <volume_name>:<container_path>
+```
+
+Example:
+
+```bash
+-v mydata:/app/data
+```
+
+### Bind Mount
+
+```bash
+-v <host_path>:<container_path>
+```
+
+Example:
+
+```bash
+-v /home/gowtham/data:/app/data
+```
+
+---
+
+## Important Point
+
+Both **Docker Volumes** and **Bind Mounts** are types of mounts.
+
+**Volume:**
+
+> Docker manages the storage.
+
+**Bind Mount:**
+
+> We choose and manage the host directory.
+
+### Easy way to remember
+
+```text
+Volume     → Docker chooses the storage location
+Bind Mount → We choose the storage location
+```
 
