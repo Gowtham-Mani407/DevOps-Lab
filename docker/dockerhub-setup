@@ -1,0 +1,334 @@
+
+## Images, Tags & Docker Hub
+
+---
+
+## 1. Go to Project
+
+```bash
+cd ~/devops-lab/docker-demo
+```
+
+Check files:
+
+```bash
+ls
+```
+
+Expected:
+
+```text
+app.py
+Dockerfile
+```
+
+---
+
+## 2. Build Image
+
+```bash
+docker build -t docker-demo:v1 .
+```
+
+Check images:
+
+```bash
+docker images
+```
+
+Image format:
+
+```text
+repository:tag
+
+docker-demo:v1
+```
+
+---
+
+## 3. Docker Tags
+
+Create another tag:
+
+```bash
+docker tag docker-demo:v1 docker-demo:latest
+```
+
+List images:
+
+```bash
+docker images
+```
+
+Example:
+
+```text
+docker-demo    v1
+docker-demo    latest
+```
+
+### Important
+
+```text
+Tag = Version/name given to an image
+
+v1
+v2
+v3
+latest
+dev
+production
+```
+
+`latest` does NOT automatically mean newest.
+
+---
+
+# 4. Docker Registry
+
+A Docker registry stores Docker images.
+
+Examples:
+
+```text
+Docker Hub
+AWS ECR
+GitHub Container Registry
+```
+
+Basic flow:
+
+```text
+Local Computer
+      │
+      │ docker push
+      ▼
+Docker Registry
+      │
+      │ docker pull
+      ▼
+Server
+```
+
+---
+
+# 5. Docker Hub Login
+
+```bash
+docker login
+```
+
+After successful login:
+
+```text
+Login Succeeded
+```
+
+---
+
+# 6. Tag Image for Docker Hub
+
+Suppose your Docker Hub username is:
+
+```text
+YOUR_USERNAME
+```
+
+Tag:
+
+```bash
+docker tag docker-demo:v1 YOUR_USERNAME/docker-demo:v1
+```
+
+Image format:
+
+```text
+USERNAME/REPOSITORY:TAG
+```
+
+Example:
+
+```text
+gowtham123/docker-demo:v1
+```
+
+---
+
+# 7. Push Image to Docker Hub
+
+```bash
+docker push YOUR_USERNAME/docker-demo:v1
+```
+
+Meaning:
+
+```text
+Local Image
+     ↓
+docker push
+     ↓
+Docker Hub
+```
+
+---
+
+# 8. Pull Image from Docker Hub
+
+```bash
+docker pull YOUR_USERNAME/docker-demo:v1
+```
+
+Meaning:
+
+```text
+Docker Hub
+     ↓
+docker pull
+     ↓
+Local Computer
+```
+
+---
+
+# 9. Run Image from Docker Hub
+
+```bash
+docker run -d \
+  -p 8000:8000 \
+  --name docker-demo-container \
+  YOUR_USERNAME/docker-demo:v1
+```
+
+Test:
+
+```bash
+curl http://localhost:8000
+```
+
+Expected:
+
+```text
+Hello from Docker!
+```
+
+---
+
+# 10. Docker Image History
+
+See image layers/history:
+
+```bash
+docker history docker-demo:v1
+```
+
+Or:
+
+```bash
+docker history YOUR_USERNAME/docker-demo:v1
+```
+
+---
+
+# 11. Inspect Image
+
+```bash
+docker image inspect docker-demo:v1
+```
+
+Shows detailed image information.
+
+---
+
+# ⭐ Important Commands
+
+```bash
+# Build image
+docker build -t docker-demo:v1 .
+
+# List images
+docker images
+
+# Create tag
+docker tag docker-demo:v1 docker-demo:latest
+
+# Login
+docker login
+
+# Tag for Docker Hub
+docker tag docker-demo:v1 YOUR_USERNAME/docker-demo:v1
+
+# Push image
+docker push YOUR_USERNAME/docker-demo:v1
+
+# Pull image
+docker pull YOUR_USERNAME/docker-demo:v1
+
+# Run image
+docker run -d -p 8000:8000 \
+  --name docker-demo-container \
+  YOUR_USERNAME/docker-demo:v1
+
+# Test application
+curl http://localhost:8000
+
+# Image history
+docker history docker-demo:v1
+
+# Image details
+docker image inspect docker-demo:v1
+```
+
+---
+
+# 🧠 Remember
+
+```text
+docker build
+     ↓
+IMAGE
+     ↓
+docker tag
+     ↓
+USERNAME/IMAGE:TAG
+     ↓
+docker push
+     ↓
+DOCKER HUB
+     ↓
+docker pull
+     ↓
+SERVER
+     ↓
+docker run
+     ↓
+CONTAINER
+```
+
+### Push vs Pull
+
+```text
+push = Local → Registry
+
+pull = Registry → Local
+```
+
+### Image vs Tag
+
+```text
+docker-demo:v1
+
+docker-demo = Image/Repository
+v1          = Tag
+```
+
+### Main Day 3 Commands
+
+```text
+docker build
+docker tag
+docker login
+docker push
+docker pull
+docker history
+docker image inspect
+```
