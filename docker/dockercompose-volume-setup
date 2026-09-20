@@ -1,0 +1,410 @@
+========================================
+DOCKER COMPOSE + VOLUME
+========================================
+
+1. WHAT IS DOCKER COMPOSE?
+----------------------------------------
+
+Docker Compose is used to define and run
+Docker containers using a YAML file.
+
+File:
+compose.yaml
+
+Start:
+docker compose up -d
+
+Build + Start:
+docker compose up -d --build
+
+Stop and remove containers:
+docker compose down
+
+
+2. WHAT IS A DOCKER VOLUME?
+----------------------------------------
+
+Docker Volume is used to store persistent data.
+
+Without Volume:
+
+Container
+   |
+   | delete container
+   v
+Data is lost
+
+
+With Volume:
+
+Container
+   |
+   | delete container
+   v
+Volume remains
+   |
+   v
+Data remains
+
+
+3. CREATE VOLUME USING COMPOSE
+----------------------------------------
+
+compose.yaml:
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - app_data:/data
+
+volumes:
+  app_data:
+
+
+4. UNDERSTANDING THIS LINE
+----------------------------------------
+
+- app_data:/data
+
+app_data = Docker volume name
+
+/data = directory inside the container
+
+Meaning:
+
+Docker Volume
+     |
+     | mounted to
+     v
+/data inside container
+
+
+5. WHAT DOES THIS DO?
+----------------------------------------
+
+volumes:
+  app_data:
+
+This tells Docker Compose to create
+a named volume called app_data.
+
+When running:
+
+docker compose up -d
+
+Docker creates the volume automatically.
+
+
+6. WHAT DOES THIS DO?
+----------------------------------------
+
+volumes:
+  - app_data:/data
+
+This attaches/mounts the volume
+app_data to /data inside the container.
+
+Visual:
+
+Docker Volume
+app_data
+    |
+    | mount
+    v
+Container
+/data
+
+
+7. CHECK VOLUME
+----------------------------------------
+
+List volumes:
+
+docker volume ls
+
+Inspect volume:
+
+docker volume inspect <volume-name>
+
+Example:
+
+docker volume inspect docker-compose-demo_app_data
+
+
+8. ENTER THE CONTAINER
+----------------------------------------
+
+docker ps
+
+Then:
+
+docker exec -it docker-compose-demo-web-1 sh
+
+
+9. CHECK CURRENT DIRECTORY
+----------------------------------------
+
+pwd
+
+Example output:
+
+/app
+
+Check files:
+
+ls
+
+Example:
+
+app.py
+
+
+10. CHECK ROOT DIRECTORY
+----------------------------------------
+
+ls /
+
+This shows directories such as:
+
+app
+bin
+dev
+etc
+home
+lib
+tmp
+usr
+var
+data
+
+
+11. CHECK THE VOLUME DIRECTORY
+----------------------------------------
+
+ls -la /data
+
+/data is the location where
+the Docker volume is mounted.
+
+
+12. CREATE DATA INSIDE THE VOLUME
+----------------------------------------
+
+Inside the container:
+
+echo "Hello Docker Volume" > /data/message.txt
+
+Check:
+
+ls -l /data
+
+Read:
+
+cat /data/message.txt
+
+Output:
+
+Hello Docker Volume
+
+
+13. ACCESS VOLUME USING ANOTHER CONTAINER
+----------------------------------------
+
+docker run --rm \
+  -v docker-compose-demo_app_data:/data \
+  alpine \
+  ls -l /data
+
+
+To read the file:
+
+docker run --rm \
+  -v docker-compose-demo_app_data:/data \
+  alpine \
+  cat /data/message.txt
+
+
+14. WHAT DOES THIS COMMAND MEAN?
+----------------------------------------
+
+docker run --rm \
+  -v docker-compose-demo_app_data:/data \
+  alpine \
+  ls -l /data
+
+
+docker run
+= Create and run a container
+
+--rm
+= Automatically remove the temporary container
+  after it exits
+
+-v
+= Mount a volume
+
+docker-compose-demo_app_data
+= Existing Docker volume
+
+/data
+= Directory inside the temporary container
+
+alpine
+= Docker image used for the temporary container
+
+ls -l /data
+= List files inside the volume
+
+
+15. VOLUME PERSISTENCE TEST
+----------------------------------------
+
+Create a file:
+
+docker exec docker-compose-demo-web-1 \
+  sh -c 'echo "Persistent Data" > /data/test.txt'
+
+
+Read it:
+
+docker exec docker-compose-demo-web-1 \
+  cat /data/test.txt
+
+
+Remove the container:
+
+docker compose down
+
+
+Start again:
+
+docker compose up -d
+
+
+Read the file again:
+
+docker exec docker-compose-demo-web-1 \
+  cat /data/test.txt
+
+
+The data is still available because
+the data is stored in the Docker volume.
+
+
+16. IMPORTANT CONCEPT
+----------------------------------------
+
+Dockerfile
+    |
+    | Creates image
+    v
+Docker Image
+    |
+    | creates
+    v
+Container
+    |
+    | /data
+    v
+Docker Volume
+    |
+    v
+Persistent Data
+
+
+17. IMPORTANT DIFFERENCE
+----------------------------------------
+
+Dockerfile:
+
+COPY app.py .
+
+This puts app.py inside the image/container.
+
+Compose:
+
+- app_data:/data
+
+This attaches a Docker volume to
+/data inside the container.
+
+Application:
+
+Writes data to:
+
+/data
+
+That data is stored in the volume.
+
+
+18. SIMPLE MEMORY TRICK
+----------------------------------------
+
+app_data = WHERE the data is stored
+
+/data = WHERE the volume appears
+         inside the container
+
+So:
+
+app_data:/data
+
+means:
+
+"Mount the Docker volume app_data
+at /data inside the container."
+
+
+19. IMPORTANT COMMANDS
+----------------------------------------
+
+Start:
+docker compose up -d
+
+Build + Start:
+docker compose up -d --build
+
+Stop:
+docker compose down
+
+Running containers:
+docker ps
+
+All containers:
+docker ps -a
+
+List volumes:
+docker volume ls
+
+Inspect volume:
+docker volume inspect <volume-name>
+
+Enter container:
+docker exec -it <container-name> sh
+
+Check volume:
+ls -la /data
+
+Read file:
+cat /data/<filename>
+
+
+========================================
+KEY POINT
+========================================
+
+Docker Volume = Persistent Storage
+
+app_data:/data
+
+app_data = Volume
+
+/data = Mount location inside container
+
+Container can be deleted.
+Volume and its data can remain.
+
+========================================
