@@ -1,0 +1,262 @@
+====================================================
+KUBERNETES - DAY 2
+PODS, YAML & FIRST APPLICATION
+====================================================
+
+POD
+---
+
+Pod is the smallest deployable unit in Kubernetes.
+
+Basic structure:
+
+Kubernetes
+    ↓
+Pod
+    ↓
+Container
+    ↓
+Application
+
+
+A Pod can contain one or more containers.
+
+Common pattern:
+
+Pod
+ |
+ └── Application Container
+
+
+FIRST POD
+---------
+
+Create:
+
+pod.yaml
+
+Content:
+
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: nginx-pod
+
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx
+
+
+YAML EXPLANATION
+----------------
+
+apiVersion:
+Defines the Kubernetes API version.
+
+kind:
+Defines the type of Kubernetes resource.
+
+Example:
+
+kind: Pod
+
+metadata:
+Contains information about the resource.
+
+Example:
+
+metadata:
+  name: nginx-pod
+
+spec:
+Defines the desired configuration/state.
+
+containers:
+Defines containers inside the Pod.
+
+name:
+Container name.
+
+image:
+Container image to run.
+
+
+CREATE POD
+----------
+
+kubectl apply -f pod.yaml
+
+
+CHECK POD
+---------
+
+kubectl get pods
+
+
+CHECK POD WITH MORE INFORMATION
+--------------------------------
+
+kubectl get pods -o wide
+
+
+DESCRIBE POD
+------------
+
+kubectl describe pod nginx-pod
+
+Useful for:
+
+- Pod details
+- Container information
+- Node information
+- Events
+- Errors
+- Troubleshooting
+
+
+VIEW LOGS
+---------
+
+kubectl logs nginx-pod
+
+
+ENTER CONTAINER
+---------------
+
+kubectl exec -it nginx-pod -- /bin/bash
+
+Inside container:
+
+ls
+
+ls /etc/nginx
+
+ls /usr/share/nginx/html
+
+cat /usr/share/nginx/html/index.html
+
+Exit:
+
+exit
+
+
+PORT FORWARDING
+---------------
+
+kubectl port-forward pod/nginx-pod 8080:80
+
+Browser:
+
+http://localhost:8080
+
+Flow:
+
+Browser
+   ↓
+localhost:8080
+   ↓
+kubectl port-forward
+   ↓
+Pod port 80
+   ↓
+Nginx
+
+
+DELETE POD
+----------
+
+kubectl delete pod nginx-pod
+
+
+IMPORTANT CONCEPT
+-----------------
+
+If a Pod is created directly and deleted,
+Kubernetes does NOT automatically recreate it.
+
+Example:
+
+Pod
+ ↓
+Delete Pod
+ ↓
+Pod is gone
+
+
+To maintain the desired number of Pods,
+we use a Deployment.
+
+Deployment:
+
+Deployment
+    ↓
+ReplicaSet
+    ↓
+Pods
+    ↓
+Containers
+
+
+IMPORTANT COMMANDS
+------------------
+
+kubectl get pods
+
+kubectl get pods -o wide
+
+kubectl describe pod nginx-pod
+
+kubectl logs nginx-pod
+
+kubectl exec -it nginx-pod -- /bin/bash
+
+kubectl apply -f pod.yaml
+
+kubectl delete pod nginx-pod
+
+kubectl port-forward pod/nginx-pod 8080:80
+
+
+IMPORTANT TERMS
+---------------
+
+Pod:
+Smallest deployable unit in Kubernetes.
+
+Container:
+Runs the application inside the Pod.
+
+Image:
+Template used to create the container.
+
+YAML:
+Used to define Kubernetes resources/configuration.
+
+kubectl:
+Command-line tool used to communicate with Kubernetes.
+
+Port Forward:
+Temporarily forwards a local port to a Pod.
+
+
+DAY 2 FLOW
+----------
+
+YAML
+ ↓
+kubectl apply
+ ↓
+Kubernetes API Server
+ ↓
+Pod
+ ↓
+Container
+ ↓
+Nginx
+
+
+====================================================
+END OF DAY 2
+====================================================

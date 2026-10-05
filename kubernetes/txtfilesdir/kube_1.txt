@@ -1,0 +1,338 @@
+====================================================
+KUBERNETES - DAY 1
+KUBERNETES FUNDAMENTALS & ARCHITECTURE
+====================================================
+
+WHAT IS KUBERNETES?
+-------------------
+Kubernetes (K8s) is an open-source platform used to
+deploy, manage, scale and maintain containerized
+applications.
+
+Docker runs containers.
+
+Kubernetes manages containerized applications.
+
+
+DOCKER VS KUBERNETES
+--------------------
+
+Docker:
+- Build images
+- Run containers
+- Stop containers
+- Manage containers
+- Manage networks
+- Manage volumes
+
+Kubernetes:
+- Deploy applications
+- Manage Pods
+- Restart failed Pods
+- Scale applications
+- Load balance traffic
+- Rolling updates
+- Rollbacks
+- Service discovery
+- Configuration management
+- Secret management
+
+
+KUBERNETES CLUSTER
+------------------
+
+A Kubernetes cluster contains:
+
+Cluster
+|
+|-- Control Plane
+|
+|-- Worker Nodes
+
+
+CONTROL PLANE
+-------------
+
+The Control Plane manages the Kubernetes cluster.
+
+Main components:
+
+1. API Server
+2. etcd
+3. Scheduler
+4. Controller Manager
+
+
+API SERVER
+----------
+
+API Server is the main communication point
+for Kubernetes.
+
+kubectl communicates with the API Server.
+
+Example:
+
+kubectl get pods
+
+Flow:
+
+kubectl
+   ↓
+API Server
+   ↓
+Kubernetes Cluster
+
+
+etcd
+----
+
+etcd is the database of Kubernetes.
+
+It stores the cluster state and configuration.
+
+Remember:
+
+API Server = Front door
+etcd       = Database
+
+
+SCHEDULER
+---------
+
+Scheduler decides which Worker Node should run
+a Pod.
+
+Example:
+
+Pod
+ ↓
+Scheduler
+ ↓
+Worker Node 2
+
+
+CONTROLLER MANAGER
+------------------
+
+Controllers continuously monitor the cluster.
+
+Kubernetes works using:
+
+Desired State vs Actual State
+
+Example:
+
+Desired = 3 Pods
+Actual  = 2 Pods
+
+Controller creates another Pod.
+
+Result:
+
+Desired = 3 Pods
+Actual  = 3 Pods
+
+
+WORKER NODE
+-----------
+
+Worker Nodes run the applications.
+
+Important components:
+
+- kubelet
+- kube-proxy
+- Container Runtime
+- Pods
+
+
+KUBELET
+-------
+
+kubelet runs on Worker Nodes.
+
+It communicates with the Control Plane and
+makes sure required Pods are running.
+
+
+KUBE-PROXY
+----------
+
+kube-proxy helps with Kubernetes networking
+and Service traffic routing.
+
+
+POD
+---
+
+Pod is the smallest deployable unit in Kubernetes.
+
+Kubernetes normally runs containers inside Pods.
+
+Structure:
+
+Kubernetes
+   ↓
+Pod
+   ↓
+Container
+   ↓
+Application
+
+
+A Pod can contain one or more containers.
+
+Usually:
+
+Pod
+ |
+ └── Application Container
+
+
+KUBECTL
+-------
+
+kubectl is the command-line tool used to
+communicate with Kubernetes.
+
+Important commands:
+
+kubectl version
+
+kubectl cluster-info
+
+kubectl get nodes
+
+kubectl get pods
+
+kubectl get deployments
+
+kubectl get services
+
+kubectl describe pod <pod-name>
+
+kubectl logs <pod-name>
+
+
+NAMESPACE
+---------
+
+Namespace is used for logical separation
+of Kubernetes resources.
+
+Common namespaces:
+
+default
+kube-system
+kube-public
+kube-node-lease
+
+Initially we will mainly use:
+
+default
+
+
+DOCKER DESKTOP KUBERNETES
+-------------------------
+
+Docker Desktop can run a local Kubernetes cluster.
+
+No Minikube is required when using Docker Desktop
+Kubernetes.
+
+Enable:
+
+Docker Desktop
+    ↓
+Settings
+    ↓
+Kubernetes
+    ↓
+Enable Kubernetes
+
+
+VERIFY KUBERNETES
+-----------------
+
+Run:
+
+kubectl version
+
+kubectl cluster-info
+
+kubectl get nodes
+
+Expected:
+
+NAME             STATUS   ROLES
+docker-desktop   Ready    control-plane
+
+STATUS should be:
+
+Ready
+
+
+CHECK PODS
+----------
+
+kubectl get pods
+
+If you see:
+
+No resources found in default namespace.
+
+That is normal because we have not deployed
+an application yet.
+
+
+IMPORTANT KUBERNETES FLOW
+-------------------------
+
+kubectl
+   ↓
+API Server
+   ↓
+Control Plane
+   ↓
+Scheduler
+   ↓
+Worker Node
+   ↓
+Pod
+   ↓
+Container
+   ↓
+Application
+
+
+MOST IMPORTANT CONCEPTS FROM DAY 1
+-----------------------------------
+
+1. Kubernetes manages containerized applications.
+
+2. Cluster contains Control Plane and Worker Nodes.
+
+3. API Server is the main communication point.
+
+4. etcd stores Kubernetes cluster state.
+
+5. Scheduler chooses where Pods run.
+
+6. Controller Manager maintains desired state.
+
+7. Worker Nodes run applications.
+
+8. Pod is the smallest deployable unit.
+
+9. Containers run inside Pods.
+
+10. kubectl is used to communicate with Kubernetes.
+
+11. Kubernetes uses Desired State vs Actual State.
+
+12. Namespace provides logical separation.
+
+====================================================
+END OF DAY 1
+====================================================
