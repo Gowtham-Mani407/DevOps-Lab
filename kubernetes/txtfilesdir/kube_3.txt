@@ -1,0 +1,358 @@
+====================================================
+KUBERNETES - DAY 3
+DEPLOYMENTS, REPLICASETS & SCALING
+====================================================
+
+
+WHY DEPLOYMENTS?
+----------------
+
+Creating Pods directly is not ideal for production.
+
+Example:
+
+Pod
+ ↓
+Container
+
+If the Pod is deleted, Kubernetes does not
+automatically maintain the desired number of Pods.
+
+Deployment solves this problem.
+
+
+DEPLOYMENT
+----------
+
+Deployment manages application Pods.
+
+Structure:
+
+Deployment
+    ↓
+ReplicaSet
+    ↓
+Pods
+    ↓
+Containers
+
+
+REPLICASET
+----------
+
+ReplicaSet ensures that the desired number of
+Pods are running.
+
+Example:
+
+Desired = 3
+
+Pod 1
+Pod 2
+Pod 3
+
+
+If one Pod crashes:
+
+Desired = 3
+Actual = 2
+
+ReplicaSet creates another Pod.
+
+Result:
+
+Desired = 3
+Actual = 3
+
+
+DEPLOYMENT YAML
+---------------
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: nginx-deployment
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: nginx
+
+  template:
+    metadata:
+      labels:
+        app: nginx
+
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx
+
+
+IMPORTANT YAML PARTS
+--------------------
+
+apiVersion:
+    API version.
+
+kind:
+    Type of Kubernetes resource.
+
+metadata:
+    Resource information.
+
+spec:
+    Desired configuration.
+
+replicas:
+    Number of desired Pods.
+
+selector:
+    Selects the Pods managed by Deployment.
+
+template:
+    Defines the Pod configuration.
+
+labels:
+    Identifies the Pods.
+
+containers:
+    Defines containers.
+
+image:
+    Container image.
+
+
+CREATE DEPLOYMENT
+-----------------
+
+kubectl apply -f deployment.yaml
+
+
+CHECK DEPLOYMENT
+----------------
+
+kubectl get deployments
+
+
+CHECK PODS
+----------
+
+kubectl get pods
+
+
+CHECK REPLICASETS
+-----------------
+
+kubectl get replicasets
+
+
+CHECK EVERYTHING
+----------------
+
+kubectl get all
+
+
+SELF-HEALING
+------------
+
+Deployment:
+
+replicas: 3
+
+Actual:
+
+3 Pods
+
+If one Pod is deleted:
+
+3 desired
+2 actual
+
+Kubernetes creates a replacement.
+
+Result:
+
+3 desired
+3 actual
+
+
+SCALE UP
+--------
+
+kubectl scale deployment nginx-deployment --replicas=5
+
+
+SCALE DOWN
+----------
+
+kubectl scale deployment nginx-deployment --replicas=3
+
+
+DECLARATIVE APPROACH
+--------------------
+
+Define desired state in YAML:
+
+replicas: 5
+
+Then:
+
+kubectl apply -f deployment.yaml
+
+
+IMPERATIVE APPROACH
+-------------------
+
+Directly tell Kubernetes what to do:
+
+kubectl scale deployment nginx-deployment --replicas=5
+
+
+ROLLING UPDATE
+--------------
+
+Kubernetes can gradually replace old Pods
+with new Pods.
+
+Example:
+
+Old:
+
+Pod 1 → old version
+Pod 2 → old version
+Pod 3 → old version
+
+Update:
+
+Pod 1 → new version
+Pod 2 → old version
+Pod 3 → old version
+
+Then:
+
+Pod 1 → new version
+Pod 2 → new version
+Pod 3 → old version
+
+Finally:
+
+Pod 1 → new version
+Pod 2 → new version
+Pod 3 → new version
+
+
+UPDATE IMAGE
+------------
+
+Example:
+
+image: nginx
+
+Change to:
+
+image: nginx:1.27
+
+Then:
+
+kubectl apply -f deployment.yaml
+
+
+ROLLOUT STATUS
+--------------
+
+kubectl rollout status deployment/nginx-deployment
+
+
+ROLLOUT HISTORY
+---------------
+
+kubectl rollout history deployment/nginx-deployment
+
+
+ROLLBACK
+--------
+
+kubectl rollout undo deployment/nginx-deployment
+
+
+IMPORTANT COMMANDS
+------------------
+
+kubectl get deployments
+
+kubectl get replicasets
+
+kubectl get pods
+
+kubectl get all
+
+kubectl describe deployment nginx-deployment
+
+kubectl scale deployment nginx-deployment --replicas=5
+
+kubectl rollout status deployment/nginx-deployment
+
+kubectl rollout history deployment/nginx-deployment
+
+kubectl rollout undo deployment/nginx-deployment
+
+
+IMPORTANT CONCEPT
+-----------------
+
+Deployment
+    ↓
+ReplicaSet
+    ↓
+Pods
+    ↓
+Containers
+
+
+RESPONSIBILITIES
+----------------
+
+Deployment:
+Manages application updates and ReplicaSets.
+
+ReplicaSet:
+Maintains desired number of Pods.
+
+Pod:
+Runs containers.
+
+Container:
+Runs the application.
+
+
+DESIRED STATE VS ACTUAL STATE
+-----------------------------
+
+Desired state:
+
+replicas: 3
+
+Actual state:
+
+3 Pods running
+
+If one Pod disappears:
+
+Desired = 3
+Actual = 2
+
+Kubernetes creates a replacement.
+
+Final:
+
+Desired = 3
+Actual = 3
+
+
+====================================================
+END OF DAY 3
+====================================================
