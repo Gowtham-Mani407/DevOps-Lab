@@ -1,0 +1,404 @@
+====================================================
+KUBERNETES - DAY 4
+SERVICES & NETWORKING
+====================================================
+
+
+WHY SERVICE?
+------------
+
+Pod IP addresses can change when Pods are recreated.
+
+Example:
+
+Pod 1 → 10.0.0.1
+Pod 2 → 10.0.0.2
+Pod 3 → 10.0.0.3
+
+If Pod 1 crashes:
+
+Pod 1 ❌
+
+Replacement:
+
+Pod 4 → 10.0.0.4
+
+Therefore Pod IPs should not normally be used
+as permanent application endpoints.
+
+Kubernetes Service provides a stable way to
+access a group of Pods.
+
+
+SERVICE
+-------
+
+A Service provides a stable network endpoint
+for a group of Pods.
+
+Example:
+
+Service
+   ↓
+┌──┼──┐
+↓  ↓  ↓
+Pod Pod Pod
+
+
+LABEL
+-----
+
+Labels are key-value pairs attached to resources.
+
+Example:
+
+app=nginx
+
+Other examples:
+
+environment=production
+app=backend
+version=v1
+
+
+SELECTOR
+--------
+
+Selector finds resources based on labels.
+
+Example:
+
+selector:
+  app: nginx
+
+This selects Pods with:
+
+app=nginx
+
+
+IMPORTANT:
+
+Labels = identify
+
+Selectors = find
+
+
+SERVICE YAML
+------------
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: nginx-service
+
+spec:
+  selector:
+    app: nginx
+
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+
+PORT
+----
+
+Service port.
+
+Example:
+
+port: 80
+
+
+TARGETPORT
+----------
+
+Port on the selected Pod/container
+where traffic should be sent.
+
+Example:
+
+targetPort: 80
+
+
+TRAFFIC FLOW
+------------
+
+Service port 80
+       ↓
+Pod targetPort 80
+
+
+CLUSTERIP
+---------
+
+ClusterIP is the default Service type.
+
+It provides an internal IP for the Service.
+
+Example:
+
+Service
+ ↓
+ClusterIP
+ ↓
+Pods
+
+ClusterIP is normally accessible
+from inside the cluster.
+
+
+CREATE SERVICE
+--------------
+
+kubectl apply -f service.yaml
+
+
+CHECK SERVICES
+--------------
+
+kubectl get services
+
+or:
+
+kubectl get svc
+
+
+DESCRIBE SERVICE
+----------------
+
+kubectl describe service nginx-service
+
+
+SERVICE TYPES
+-------------
+
+1. ClusterIP
+2. NodePort
+3. LoadBalancer
+4. ExternalName
+
+
+CLUSTERIP
+---------
+
+Default Service type.
+
+Used for internal communication.
+
+Example:
+
+Frontend Pod
+    ↓
+backend-service
+    ↓
+Backend Pods
+
+
+NODEPORT
+--------
+
+Exposes a Service through a port
+on each Node.
+
+Example:
+
+Browser
+   ↓
+NodeIP:30080
+   ↓
+Service
+   ↓
+Pod
+
+
+NODEPORT RANGE
+--------------
+
+Default range:
+
+30000 - 32767
+
+
+NODEPORT YAML
+-------------
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: nginx-service
+
+spec:
+  type: NodePort
+
+  selector:
+    app: nginx
+
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+
+CHECK NODEPORT
+--------------
+
+kubectl get svc
+
+
+Example:
+
+80:30080/TCP
+
+Means:
+
+Service Port = 80
+NodePort = 30080
+
+
+LOADBALANCER
+------------
+
+Used mainly with cloud environments.
+
+Flow:
+
+Internet
+   ↓
+Cloud Load Balancer
+   ↓
+Kubernetes Service
+   ↓
+Pods
+
+
+SERVICE DNS
+-----------
+
+Kubernetes provides DNS-based
+Service discovery inside the cluster.
+
+Example:
+
+http://nginx-service
+
+Instead of using:
+
+http://10.x.x.x
+
+
+TEST SERVICE
+------------
+
+Create temporary test Pod:
+
+kubectl run test-pod --image=curlimages/curl --rm -it -- sh
+
+Inside:
+
+curl http://nginx-service
+
+Exit:
+
+exit
+
+
+CHECK ENDPOINTS
+---------------
+
+kubectl get endpoints
+
+kubectl get endpointslices
+
+
+IMPORTANT CONCEPT
+-----------------
+
+Service does NOT create Pods.
+
+Deployment:
+    Creates/manages Pods.
+
+Service:
+    Provides networking/access to Pods.
+
+
+COMPLETE STRUCTURE
+------------------
+
+Deployment
+    ↓
+ReplicaSet
+    ↓
+Pods
+    ↑
+    │
+Service
+    ↑
+    │
+Application/User
+
+
+NETWORK FLOW
+------------
+
+Browser
+   ↓
+NodePort
+   ↓
+Service
+   ↓
+Pod
+   ↓
+Container
+   ↓
+Application
+
+
+LABEL SELECTOR FLOW
+-------------------
+
+Pods:
+
+Pod 1 → app=nginx
+Pod 2 → app=nginx
+Pod 3 → app=nginx
+
+Service:
+
+selector:
+  app: nginx
+
+Result:
+
+Service
+   ↓
+Pod 1
+Pod 2
+Pod 3
+
+
+IMPORTANT COMMANDS
+------------------
+
+kubectl get pods
+
+kubectl get svc
+
+kubectl describe svc nginx-service
+
+kubectl get endpoints
+
+kubectl get endpointslices
+
+kubectl get all
+
+kubectl apply -f service.yaml
+
+
+====================================================
+END OF DAY 4
+====================================================
